@@ -44,3 +44,7 @@ $('#datepicker-2').datepicker(
         });
       }
 
+      function download_dok(url,id){ 
+        window.location.href = url;
+        api('./datin/update_download/'+id,'get','frm',function(data){});
+      }

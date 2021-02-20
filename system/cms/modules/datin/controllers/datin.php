@@ -53,7 +53,7 @@ class Datin extends Public_Controller
 		$this->template->title($this->module_details['name'])
 		->set_metadata('description', 'Pusat Data dan informasi')
 		->set_metadata('keywords', 'Data dan informasi') 
-		->append_js('module::datin.js')
+		->append_js('module::datin_home.js')
 		->set('Datins', $Datins)
 		->set('pagination', $pagination)
 		->set('jenis', $jenis_info)
@@ -85,7 +85,7 @@ class Datin extends Public_Controller
 		foreach($resdetail as $val){
 			$html .= '<tr>';
 			$html .= '<td>';
-			$html .= '<small><i class="fal fa-paperclip"></i> <a href="'.base_url().'assets/dokumen/'.$val->dokumen.'">'.$val->dokumen.'</small>' ;
+			$html .= '<small><i class="fal fa-paperclip"></i> <a href="javascript:void(0)" onClick="download_dok(\''.base_url().'assets/dokumen/'.$val->dokumen.'\',\''.$val->id.'\')">'.$val->dokumen.'</small>' ;
 			$html .= '</td>';
 			$html .= '<tr>';
 		}
@@ -111,6 +111,46 @@ class Datin extends Public_Controller
 		$_SESSION['kategori'] = '';
 		$_SESSION['jenis_informasi'] = '';
 		redirect('datin/index');
+	}
+
+	public function update_download($id=""){
+		header('Content-Type: application/json');
+		$this->db->query('UPDATE default_datins_applied SET download = download + 1 WHERE id ='.$id);
+		echo json_encode($arr['status']='ok');
+	}
+
+	public function urusan(){  
+		$this->db->select("sum(default_datins_applied.download)as jml,master_urusans.master_urusan_name as nama");
+ 
+		$this->db->join('datins_applied','datins_applied.master_id=datins.id'); 
+		$this->db->join('master_urusans','master_urusans.id=datins.urusan'); 
+		$this->db->group_by("master_urusans.master_urusan_name");
+		$res = $this->db->get('datins')->result();		
+		$html='Categories,Jumlah '."\r\n"; 
+		foreach($res as $val){
+			$html.= str_replace(' ','_',$val->nama).','.$val->jml." \r\n";
+		}
+					
+				
+				 	echo $html; 
+					 //echo "Server,Instance Load \nec2-310-67-177.compute-1.amazonaws.com,93.31520951357652 \nec2-285-167-103.compute-1.amazonaws.com,45.337991729357434";
+	}
+
+	public function jenis_info(){  
+		$this->db->select("sum(default_datins_applied.download)as jml,master_jenis_informasis.master_jenis_informasi_name as nama");
+ 
+		$this->db->join('datins_applied','datins_applied.master_id=datins.id'); 
+		$this->db->join('master_jenis_informasis','master_jenis_informasis.id=datins.jenis_informasi'); 
+		$this->db->group_by("master_jenis_informasis.master_jenis_informasi_name");
+		$res = $this->db->get('datins')->result();		
+		$html='Categories,Jumlah '."\r\n"; 
+		foreach($res as $val){
+			$html.= str_replace(' ','_',$val->nama).','.$val->jml." \r\n";
+		}
+					
+				
+				 	echo $html; 
+					 //echo "Server,Instance Load \nec2-310-67-177.compute-1.amazonaws.com,93.31520951357652 \nec2-285-167-103.compute-1.amazonaws.com,45.337991729357434";
 	}
  
 }

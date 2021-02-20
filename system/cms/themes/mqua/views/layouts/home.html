@@ -53,24 +53,24 @@
                     </div>
                 <?php } ?>
                 <div class="row">
-                    <div class="col-sm-6 col-xl-3">
+                    <div class="col-sm-6 col-xl-6">
                         <div class="p-3 bg-primary-300 rounded overflow-hidden position-relative text-white mb-g">
                             <div class="">
                                 <h3 class="display-4 d-block l-h-n m-0 fw-500">
                                    <?php $resdata = $this->db->from('datins')->count_all_results();
-                                   echo $resdata?>
+                                   echo number_format($resdata)?>
                                     <small class="m-0 l-h-n">Jumlah Data</small>
                                 </h3>
                             </div>
                             <i class="fal fa-user position-absolute pos-right pos-bottom opacity-15 mb-n1 mr-n1" style="font-size:6rem"></i>
                         </div>
                     </div>
-                    <div class="col-sm-6 col-xl-3">
+                    <div class="col-sm-6 col-xl-6">
                         <div class="p-3 alert-primary rounded overflow-hidden position-relative   mb-g">
                             <div class="">
                                 <h3 class="display-4 d-block l-h-n m-0 fw-500">
-                                    <?php $resdownload = $this->db->select(' sum(download) as jml')->get('datins')->row();
-                                    echo $resdownload->jml;
+                                    <?php $resdownload = $this->db->select(' sum(download) as jml')->get('datins_applied')->row();
+                                    echo number_format($resdownload->jml);
                                     ?>
                                     <small class="m-0 l-h-n">Jumlah Download</small>
                                 </h3>
@@ -79,9 +79,31 @@
                         </div>
                     </div> 
                 </div>
+                <div class="row">
+                    <div class="col-sm-6 col-xl-6"> 
+                        <div class="card p-3">
+                            <div id="chrtpopuler"></div>
+                        </div>
+                        
+                        </div>
+                        <div class="col-sm-6 col-xl-6"> 
+                            <div class="card p-3">
+                                <div id="chrtjenisinfo"></div>
+                            </div>
+                            
+                            </div>
+                    </div>
           
                 </main>
             {{ theme:partial name="footer" }} 
-    
+    <script>
+         var getUrl = window.location;
+         var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1]+'/';
+ 
+            drawchart('chrtpopuler','Grafik Download','Berdasarkan Jenis Urusan',baseUrl+'datin/urusan');
+            drawchart('chrtjenisinfo','Grafik Download','Berdasarkan Jenis Urusan',baseUrl+'datin/jenis_info');
+        
+       
+    </script>
     </body>
     </html>
