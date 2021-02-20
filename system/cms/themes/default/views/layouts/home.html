@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en" class="grey-theme">
+
+
+    <head>
+        {{ theme:partial name="metadata" }}
+    </head>
+
+    <body>
+        <div class="row no-gutters vh-100 loader-screen">
+            <div class="col align-self-center text-white text-center">
+                <img src="<?php echo base_url()?>system/cms/themes/default/img/logo.png" alt="logo">
+                <h1><span class="font-weight-light">M</span>-Qua</h1>
+                <div class="laoderhorizontal">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        {{ theme:partial name="sidebar" }}
+        <div class="wrapper">
+            {{ theme:partial name="header" }}
+            </div>
+            <div class="container">
+                <input type="text" class="form-control form-control-lg search my-3" placeholder="Search">
+                <div class="container mb-3">
+                    <div class="row" style="margin-bottom:50px">
+                        <div class="col text-center">
+                            {{ widgets:instance id="1"}}
+                        </div>
+                    </div>
+                    <div class="row">
+                     
+                        <!-- Swiper -->
+                        <div class="swiper-container news-slide">
+                            <div class="swiper-wrapper">
+                                <?php
+                                if(@$this->current_user->id){  
+                                    $this->db->select(' count(*)as jml'); 
+                                    $res = $this->db->where('active','1')->like('parent_arr','"'.$this->current_user->id.'"')->get('users')->row();
+                                     if(!@$res){
+                                    $jml = 0;
+                                }else{
+                                    $jml =$res->jml;
+                                } 
+                               
+                                ?>
+                                <div class="swiper-slide"> 
+                                    <div class="card shadow-sm border-0 mb-4">
+                                        <div class="card-body" style="text-align: center !important;">
+                                            <i class="material-icons mb-4 md-36 text-template">face</i>
+                                            <h2><?php echo $jml?></h2>
+                                            <p class="text-secondary text-mute">Anggota</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php
+                                $this->db->select(' sum(total)as total');
+                                $bh = $this->db->where('user_id',$this->current_user->id)->where('status','active')->where('nama','Bagi Hasil Pembelian')->get('transaksi')->row();
+
+                                ?>
+                                <div class="swiper-slide">
+                                    <div class="card shadow-sm border-0 mb-4">
+                                        <div class="card-body" style="text-align: center !important;">
+                                            <i class="material-icons mb-4 md-36 text-template">subscriptions</i>
+                                            <h2><?php echo number_format($bh->total)?></h2>
+                                            <p class="text-secondary text-mute">Bagi Hasil</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                 <?php }?>
+                                 <?php
+                                 $this->db->select(' sum(total)as total');
+                                 $bhn = $this->db->where('status','active')->where('nama','Bagi Hasil Nasional')->get('transaksi')->row();
+
+                                 ?>
+                                <div class="swiper-slide">
+                                    <div class="card shadow-sm border-0 mb-4">
+                                        <div class="card-body" style="text-align: center !important;">
+                                            <i class="material-icons mb-4 md-36 text-template">subscriptions</i>
+                                            <h2><?php echo number_format($bhn->total)?></h2>
+                                            <p class="text-secondary text-mute">Bagi Hasil Nasional</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="card shadow-sm border-0 mb-4">
+                                        <div class="card-body" style="text-align: center !important;">
+                                            <i class="material-icons mb-4 md-36 text-template">subscriptions</i>
+                                            <h2>635</h2>
+                                            <p class="text-secondary text-mute">Dana Kemanusiaan</p>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                            </div>
+                            <!-- Add Pagination -->
+                            <div class="swiper-pagination"></div>
+                        </div>
+                    </div> 
+                </div>
+              
+    
+                <h6 class="subtitle">Products <a href="all-products.html" class="float-right small">View All</a></h6>
+                <div class="row">
+                    <?php
+                    if((@$group_id=$this->current_user->group_id) AND ($group_id <> 1)){
+                        $this->db->where('produks_harga.id_harga',$group_id);
+                    }else{
+                         $this->db->where('produks_harga.id_harga',11);
+                    }
+                    $resproduk = $this->db->join('produks_harga','produks_harga.id_produks=produks.id','LEFT')->where('produks.status','live')->get('produks')->result();
+                        foreach($resproduk as $dprod){
+                    ?>
+                    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                        <div class="card shadow-sm border-0 mb-4">
+                            <div class="card-body">
+                                <button class="btn btn-sm btn-link p-0"><i class="material-icons md-18">favorite_outline</i></button>
+                                <div class="badge badge-danger float-right mt-1">Hot</div>
+                                <figure class="product-image"><img src="./assets/images/produk/<?php echo $dprod->product_image?>" alt="" class=""></figure>
+                                <a href="product-details.html" class="text-dark mb-1 mt-2 h6 d-block"><?php echo $dprod->name?> </a>
+                                <p class="text-secondary small mb-2"> </p>
+                                <h5 class="text-success font-weight-normal mb-0">Rp <?php echo number_format($dprod->harga)?><sup></sup></h5>
+                                <p class="text-secondary small text-mute mb-0"></p>
+                                <button class="btn btn-default button-rounded-36 shadow-sm float-bottom-right"><i class="material-icons md-18">shopping_cart</i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <?php }?>
+                     
+                    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                     
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                   
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                    
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3 col-xl-2">
+                  
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid bg-warning text-white my-3" style="background:#fda400 !important">
+                <div class="row">
+                    <div class="container">
+                        <div class="row  py-4 ">
+                            <div class="col">
+                                <h1 class="text-uppercase mb-3">Dapatkan keuntungan berlipat sebagai Agen</h1>
+                                <p class="mb-3">Use Coupan Code<br><span class="text-dark">DFR0020</span></p>
+                            </div>
+                            <div class="col-5 col-md-3 col-lg-2 col-xl-2">
+                                <img src="img/galon.png" alt="" class="mw-100 mt-3">
+                            </div>
+                            <div class="w-100"></div>
+                            <div class="col">
+                                <p>*Syarat dan ketentuan berlaku</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             
+            
+            <div class="footer">
+                <div class="no-gutters">
+                    <div class="col-auto mx-auto">
+                        <div class="row no-gutters justify-content-center">
+                            <div class="col-auto">
+                                <a href="index-2.html" class="btn btn-link-default active">
+                                    <i class="material-icons">store_mall_directory</i>
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="statistics.html" class="btn btn-link-default">
+                                    <i class="material-icons">insert_chart_outline</i>
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="cart.html" class="btn btn-default shadow centerbutton">
+                                    <i class="material-icons">local_mall</i>
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="favorite-products.html" class="btn btn-link-default">
+                                    <i class="material-icons">favorite</i>
+                                </a>
+                            </div>
+                            <div class="col-auto">
+                                <a href="profile.html" class="btn btn-link-default">
+                                    <i class="material-icons">account_circle</i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+  
+        
+        
+        <!-- jquery, popper and bootstrap js -->
+        <script src="system/cms/themes/default/js/jquery-3.3.1.min.js"></script>
+        <script src="system/cms/themes/default/js/popper.min.js"></script>    
+         <script src="system/cms/themes/default/vendor/bootstrap-4.4.1/js/bootstrap.min.js"></script>
+        <!-- cookie js -->     <script src="system/cms/themes/default/vendor/cookie/jquery.cookie.js"></script>
+    
+        <!-- swiper js -->
+        <script src="system/cms/themes/default/vendor/swiper/js/swiper.min.js"></script>
+    
+        <!-- template custom js -->
+        <script src="system/cms/themes/default/js/main.js"></script>
+        {{ asset:render }}
+        <!-- page level script -->
+        <script>
+            $(window).on('load', function() {
+                /* swiper slider carousel */
+                var swiper = new Swiper('.small-slide', {
+                    slidesPerView: 'auto',
+                    spaceBetween: 0,
+                });
+    
+                var swiper = new Swiper('.news-slide', {
+                    slidesPerView: 2,
+                    spaceBetween: 0,
+                    pagination: {
+                        el: '.swiper-pagination',
+                    },
+                    breakpoints: {
+                        1024: {
+                            slidesPerView: 4,
+                            spaceBetween: 0,
+                        },
+                        768: {
+                            slidesPerView: 2,
+                            spaceBetween: 0,
+                        },
+                        640: {
+                            slidesPerView: 2,
+                            spaceBetween: 0,
+                        },
+                        320: {
+                            slidesPerView: 2,
+                            spaceBetween: 0,
+                        }
+                    }
+                });
+    
+                
+            });
+    
+        </script>
+    
+    </body>
+    </html>
