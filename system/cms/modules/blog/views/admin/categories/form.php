@@ -24,7 +24,7 @@
 
 </div>
 
-	<div><?php $this->load->view('admin/partials/buttons', array('buttons' => array('save', 'cancel') )) ?></div>
+	<div><?php $this->load->view('admin/partials/buttons', array('buttons' => array('save') )) ?></div>
 
 <?php echo form_close() ?>
 </div>
