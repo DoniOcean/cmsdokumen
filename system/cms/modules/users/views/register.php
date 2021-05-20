@@ -7,42 +7,44 @@
 
 <?php if ( ! empty($error_string)):?>
 <!-- Woops... -->
-<div class="error-box">
+<div class="alert alert-danger">
 	<?php echo $error_string;?>
 </div>
 <?php endif;?>
 
 <?php echo form_open('register', array('id' => 'register')) ?>
-<ul>
+ 
 	
 	<?php if ( ! Settings::get('auto_username')): ?>
-	<li>
-		<label for="username"><?php echo lang('user:username') ?></label>
-		<input type="text" name="username" maxlength="100" value="<?php echo $_user->username ?>" />
-	</li>
+	<div class="form-group">
+	<label class="form-label"><?php echo lang('user:username') ?></label>
+		<input type="text" name="username" class="form-control" maxlength="100" value="<?php echo $_user->username ?>" />
+	</div>
 	<?php endif ?>
 	
-	<li>
-		<label for="email"><?php echo lang('global:email') ?></label>
-		<input type="text" name="email" maxlength="100" value="<?php echo $_user->email ?>" />
-		<?php echo form_input('d0ntf1llth1s1n', ' ', 'class="default-form" style="display:none"') ?>
-	</li>
+	<div class="form-group">
+	<label class="form-label"><?php echo lang('global:email') ?></label>
+		<input type="text" class="form-control" name="email" maxlength="100" value="<?php echo $_user->email ?>" />
+		<?php echo form_input('d0ntf1llth1s1n', ' ', 'class="form-control" style="display:none"') ?>
+	</div>
 	
-	<li>
-		<label for="password"><?php echo lang('global:password') ?></label>
-		<input type="password" name="password" maxlength="100" />
-	</li>
-
-	<?php foreach($profile_fields as $field) { if($field['required'] and $field['field_slug'] != 'display_name') { ?>
-	<li>
-		<label for="<?php echo $field['field_slug'] ?>"><?php echo (lang($field['field_name'])) ? lang($field['field_name']) : $field['field_name'];  ?></label>
-		<div class="input"><?php echo $field['input'] ?></div>
-	</li>
-	<?php } } ?>
+	<div class="form-group">
+	<label class="form-label"><?php echo lang('global:password') ?></label>
+		<input type="password" class="form-control" name="password" maxlength="100" />
+	</div>
+	<div class="form-group">
+	<label class="form-label">First Name</label>
+		<input type="text" class="form-control" name="first_name" id="first_name" maxlength="100" />
+	</div>
+	<div class="form-group">
+	<label class="form-label">Last Name</label>
+		<input type="text" class="form-control" name="last_name" id="last_name" maxlength="100" />
+	</div>
+ 
 
 	
-	<li>
+	<div class="form-group">
 		<?php echo form_submit('btnSubmit', lang('user:register_btn')) ?>
-	</li>
-</ul>
+	</div>
+ 
 <?php echo form_close() ?>

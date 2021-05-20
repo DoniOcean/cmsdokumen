@@ -5,7 +5,7 @@
  * @author  PyroCMS Dev Team
  * @package PyroCMS\Core\Modules\Blog\Controllers
  */
-class Datin extends Public_Controller
+class datin extends Public_Controller
 {
 	/**
 	 * Every time this controller is called should:
@@ -16,7 +16,7 @@ class Datin extends Public_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->load->model('Datin_m');
+		$this->load->model('datin_m');
 	}
 
 	/**
@@ -29,11 +29,11 @@ class Datin extends Public_Controller
 	public function index()
 	{
 		// Create pagination links
-		$total_rows = $this->Datin_m->where('datins.status','Publik')->count_by();
+		$total_rows = $this->datin_m->where('datins.status','Publik')->count_by();
 		$pagination = create_pagination_admin('datin/index', $total_rows,20,3);
  
 		$base_where =   $pagination;
-		$Datins = $this->Datin_m->where('datins.status','Publik')->get_many_by($base_where);
+		$datins = $this->datin_m->where('datins.status','Publik')->get_many_by($base_where);
 
 		$jenis_info_db=$this->db->get('master_jenis_informasis')->result();
 		foreach($jenis_info_db as $ji){
@@ -54,7 +54,7 @@ class Datin extends Public_Controller
 		->set_metadata('description', 'Pusat Data dan informasi')
 		->set_metadata('keywords', 'Data dan informasi') 
 		->append_js('module::datin_home.js')
-		->set('Datins', $Datins)
+		->set('datins', $datins)
 		->set('pagination', $pagination)
 		->set('jenis', $jenis_info)
 		->set('urusan', $urusan)
@@ -71,7 +71,7 @@ class Datin extends Public_Controller
 		$this->db->join('master_urusans','master_urusans.id=datins.urusan'); 
 		$res = $this->db->get('datins')->row();
 
-		$html = '<small>Nama Dokumen :</small>  <br><b>'.$res->Datin_name.'</b>';
+		$html = '<small>Nama Dokumen :</small>  <br><b>'.$res->datin_name.'</b>';
 		$html .= '<br><small>Ringkasan :</small>  <br><em>'.$res->ringkasan.'</em>';
 		$html .= '<br><small>Jenis Informasi :</small>  <br><b>'.$res->ji.'</b>';
 		$html .= '<br><small>Urusan :</small>  <br><b>'.$res->mu.'</b>';
@@ -85,7 +85,7 @@ class Datin extends Public_Controller
 		foreach($resdetail as $val){
 			$html .= '<tr>';
 			$html .= '<td>';
-			$html .= '<small><i class="fal fa-paperclip"></i> <a href="javascript:void(0)" onClick="download_dok(\''.base_url().'assets/dokumen/'.$val->dokumen.'\',\''.$val->id.'\')">'.$val->dokumen.'</small>' ;
+			$html .= '<small><i class="fal fa-paperclip"></i> <a href="javascript:void(0)" onClick="download_dok(\'https://km-dppapp.jakarta.go.id/uploads/default/files/'.$val->dokumen.'\',\''.$val->id.'\')">'.$val->dokumen.'</small>' ;
 			$html .= '</td>';
 			$html .= '<tr>';
 		}
@@ -151,6 +151,98 @@ class Datin extends Public_Controller
 				
 				 	echo $html; 
 					 //echo "Server,Instance Load \nec2-310-67-177.compute-1.amazonaws.com,93.31520951357652 \nec2-285-167-103.compute-1.amazonaws.com,45.337991729357434";
+	}
+
+	public function ketersediaan(){  
+		$this->db->select("count(*)as jml,master_urusans.master_urusan_name as nama");
+ 
+		$this->db->join('master_urusans','master_urusans.id=datins.urusan'); 
+		$this->db->group_by("master_urusans.master_urusan_name");
+		$res = $this->db->get('datins')->result();		
+		$html='Categories,Jumlah '."\r\n"; 
+		foreach($res as $val){
+			$html.= str_replace(' ','_',$val->nama).','.$val->jml." \r\n";
+		}
+					
+				
+				 	echo $html; 
+					 //echo "Server,Instance Load \nec2-310-67-177.compute-1.amazonaws.com,93.31520951357652 \nec2-285-167-103.compute-1.amazonaws.com,45.337991729357434";
+	}
+
+	public function kirim(){
+		 // Konfigurasi email
+		 $this->load->library('PHPMailer_load'); //Load Library PHPMailer
+		 $mail = $this->phpmailer_load->load(); // Mendefinisikan Variabel Mail 
+		 $mail->isSMTP();  // Mengirim menggunakan protokol SMTP
+		 $mail->Host = 'smtp.gmail.com'; // Host dari server SMTP
+		 $mail->SMTPAuth = true; // Autentikasi SMTP
+		 $mail->Username = 'disbuddki@gmail.com';
+		 $mail->Password = 'digital21*#';
+		 $mail->SMTPSecure = 'tls';
+		 $mail->Port = 587;
+		 $mail->setFrom('disbuddki@gmail.com', 'Undangan Acara'); // Sumber email
+		 $mail->addAddress('atmadikaria@gmail.com','Kompi Kaleng'); // Masukkan alamat email dari variabel $email
+		 $mail->Subject = "Undangan Acara"; // Subjek Email
+		 $mail->msgHtml(" 
+  
+				 Anda dapat mengkonfirmasi kehadiran dengan membalas e-mail ini.<br>
+				 Terima Kasih
+			 "); // Isi email dengan format HTML
+  
+  
+		 if (!$mail->send()) {
+					 echo "Mailer Error: " . $mail->ErrorInfo;
+				 } else {
+					 //echo "Message sent!";
+				 } // Kirim email dengan cek kond
+    
+	}
+
+	public function cek(){
+		$ports[] = array('host'=>'interspire.smtp.com','number'=>25);
+$ports[] = array('host'=>'interspire.smtp.com','number'=>2525);
+$ports[] = array('host'=>'interspire.smtp.com','number'=>25025);
+$ports[] = array('host'=>'helpme.interspire.smtp.com','number'=>80);
+
+$ports[] = array('host'=>'google.com','number'=>80);
+$ports[] = array('host'=>'smtp.gmail.com','number'=>587);
+$ports[] = array('host'=>'smtp.gmail.com','number'=>465);
+$ports[] = array('host'=>'pop.gmail.com','number'=>995);
+$ports[] = array('host'=>'imap.gmail.com','number'=>993);
+
+$ports[] = array('host'=>'ftp.mozilla.org','number'=>21);
+$ports[] = array('host'=>'smtp2go.com','number'=>8025);
+
+$ports[] = array('host'=>'relay.dnsexit.com','number'=>25);
+$ports[] = array('host'=>'relay.dnsexit.com','number'=>26);
+$ports[] = array('host'=>'relay.dnsexit.com','number'=>940);
+$ports[] = array('host'=>'relay.dnsexit.com','number'=>8001);
+$ports[] = array('host'=>'relay.dnsexit.com','number'=>2525);
+$ports[] = array('host'=>'relay.dnsexit.com','number'=>80);
+
+$ports[] = array('host'=>'mail.authsmtp.com','number'=>23);
+$ports[] = array('host'=>'mail.authsmtp.com','number'=>25);
+$ports[] = array('host'=>'mail.authsmtp.com','number'=>26);
+$ports[] = array('host'=>'mail.authsmtp.com','number'=>2525);
+
+foreach ($ports as $port)
+{
+    //$connection = @fsockopen($port['host'], $port['number']);
+    $connection = @fsockopen($port['host'], $port['number'], $errno, $errstr, 5); // 5 second timeout for each port.
+
+    if (is_resource($connection))
+    {
+        echo '<h2>' . $port['host'] . ':' . $port['number'] . ' ' . '(' . getservbyport($port, 'tcp') . ') is open.</h2>' . "\n";
+
+        fclose($connection);
+    }
+
+    else
+    {
+        echo '<h2>' . $port['host'] . ':' . $port['number'] . ' is not responding.</h2>' . "\n";
+    }
+}
+
 	}
  
 }

@@ -1,0 +1,40 @@
+<header id="header" class="transparent-header dark full-header no-sticky">
+	<div id="header-wrap">
+	<div class="container clearfix">
+		<div id="primary-menu-trigger"><i class="icon-reorder"></i></div>
+	
+	<div id="logo">
+	<a href="<?php echo base_url()?>" class="standard-logo" data-dark-logo="<?php echo base_url()?>assets/images/logo-header.png"><img src="<?php echo base_url()?>assets/images/logo.png" alt="Canvas Logo"></a>
+	<a href="<?php echo base_url()?>" class="retina-logo" data-dark-logo="<?php echo base_url()?>assets/images/logo-header.png"><img src="<?php echo base_url()?>assets/images/logo-header.png" alt="Canvas Logo"></a>
+	</div>
+	
+	<nav id="primary-menu">
+		
+	<ul> 
+	
+	</li>
+    
+	
+		<?php if(($this->current_user)){?>
+		<li><a href="<?php echo base_url()?>admin" >Admin</a></li>
+		<li><a href="./users/logout" >Logout</a></li> 
+		<?php }else{?>
+			<li><a href="<?php echo base_url()?>users/login">Login</a></li>
+			<li>  <a href="<?php echo base_url()?>users/pendaftaran" >Pendaftaran</a></li>
+			<li> <a href="<?php echo base_url()?>users/reset_pass" >Lupa Password</a></li>
+			<?php }?>
+			
+	</ul>
+	
+	 
+	
+	<div id="top-search">
+	<a href="#" id="top-search-trigger"><i class="icon-search3"></i><i class="icon-line-cross"></i></a>
+	<form action="http://themes.semicolonweb.com/html/canvas/search.html" method="get">
+	<input type="text" name="q" class="form-control" value="" placeholder="Type &amp; Hit Enter..">
+	</form>
+	</div>
+	</nav>
+	</div>
+	</div>
+	</header>

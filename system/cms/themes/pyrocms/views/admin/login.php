@@ -37,12 +37,7 @@
 						<li>
 							<div class="input animated fadeInDown" id="login-pw"><input type="password" name="password" placeholder="<?php echo lang('global:password'); ?>"/></div>
 						</li>
-						<li class="animated fadeInDown" id="login-save">
-							<label for="remember-check" id="login-remember">
-								<input type="checkbox" name="remember" id="remember-check"/>
-								<?php echo lang('user:remember'); ?>
-							</label>
-						</li>
+						 
 					</ul>
 					<div class="animated fadeIn" id="login-action">
 						<div class="buttons padding-top" id="login-buttons">
@@ -51,6 +46,10 @@
 							</button>
 						</div>
 					</div>
+					<label for="remember-check" id="login-remember">
+								 
+								<a href="<?php echo base_url()?>register">Register</a>
+							</label>
 					<!-- </div> -->
 				<?php echo form_close(); ?>
 			</div>

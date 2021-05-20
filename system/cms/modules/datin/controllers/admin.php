@@ -1,9 +1,9 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 /**
- * Maintain a central list of Datins to label and organize your content.
+ * Maintain a central list of datins to label and organize your content.
  *
  * @author PyroCMS Dev Team
- * @package PyroCMS\Core\Modules\Datins\Controllers
+ * @package PyroCMS\Core\Modules\datins\Controllers
  *
  */
 class Admin extends Admin_Controller
@@ -14,19 +14,19 @@ class Admin extends Admin_Controller
 	public function __construct()
 	{
 		parent::__construct();
-
+ 
 		// Load the required classes
 		$this->load->library('form_validation');
 
-		$this->load->model('Datin_m');
+		$this->load->model('datin_m');
 
-		$this->lang->load('Datins');
+		$this->lang->load('datins');
 
 		// Validation rules
 		$this->validation_rules = array(
 			array(
-				'field' => 'Datin_name',
-				'label' => lang('Datin:name'),
+				'field' => 'datin_name',
+				'label' => lang('datin:name'),
 				'rules' => 'trim|required|callback__check_title'
 			),array(
 				'field' => 'jenis_informasi',
@@ -45,13 +45,17 @@ class Admin extends Admin_Controller
 				'label' => 'Ringkasan',
 				'rules' => 'trim|required'
 			),array(
-				'field' => 'tgl_dokumen',
-				'label' => 'Tanggal Dokumen',
-				'rules' => 'trim|required'
-			),array(
 				'field' => 'id',
 				'label' => 'Tanggal Dokumen',
 				'rules' => 'trim'
+			),array(
+				'field' => 'bulan',
+				'label' => 'Bulan Dokumen',
+				'rules' => 'required'
+			),array(
+				'field' => 'tahun',
+				'label' => 'Tahun Dokumen',
+				'rules' => 'required'
 			),
 		);
 
@@ -60,17 +64,19 @@ class Admin extends Admin_Controller
 	}
 
 	/**
-	 * Create a new Datin
+	 * Create a new datin
 	 */
 	public function index()
 	{  
-	 
+	  
+		 
 		// Create pagination links
-	 	$total_rows = $this->Datin_m->count_by();
+	 	$total_rows = $this->datin_m->count_by();
 		$pagination = create_pagination_admin('admin/datin/index', $total_rows,20,4);
  
 		$base_where =   $pagination;
-		$Datins = $this->Datin_m->get_many_by($base_where);
+		$datins = $this->datin_m->get_many_by($base_where);
+		
 		$jenis_info_db=$this->db->get('master_jenis_informasis')->result();
 		foreach($jenis_info_db as $ji){
 			$name = $ji->master_jenis_informasi_name;
@@ -87,7 +93,7 @@ class Admin extends Admin_Controller
 		
 		$this->template 
 			->title($this->module_details['name'])  
-			->set('Datins', $Datins)
+			->set('datins', $datins)
 			->set('pagination', $pagination)
 			->set('jenis', $jenis_info)
 		->set('urusan', $urusan)
@@ -108,16 +114,16 @@ class Admin extends Admin_Controller
 		//}
 		 
 		// Create pagination links
-		$total_rows = $this->Datin_m->count_by();
-		$pagination = create_pagination_admin('admin/Datin/index_json', $total_rows,20,4);
+		$total_rows = $this->datin_m->count_by();
+		$pagination = create_pagination_admin('admin/datin/index_json', $total_rows,20,4);
  
 		$base_where =   $pagination;
-		$Datins = $this->Datin_m->get_many_by($base_where);
+		$datins = $this->datin_m->get_many_by($base_where);
 		$res=array();
 		$i=0;
-		foreach($Datins as $val){
+		foreach($datins as $val){
 			$res['data'][$i]['id']= $val->id;
-			$res['data'][$i]['name']= $val->Datin_name; 
+			$res['data'][$i]['name']= $val->datin_name; 
 			++$i;
 		}
 		$res['pagination']=$pagination;
@@ -143,6 +149,9 @@ class Admin extends Admin_Controller
 		$_SESSION['keyword'] = $this->input->post('search');
 		$_SESSION['kategori'] = $this->input->post('kategorisrch');
 		$_SESSION['jenis_informasi'] = $this->input->post('jenis_informasi');
+		$_SESSION['bulan'] = $this->input->post('bulan');
+		$_SESSION['tahun'] = $this->input->post('tahun');
+
 		redirect('admin/datin/index');
 	}
 
@@ -152,82 +161,85 @@ class Admin extends Admin_Controller
 	{  
 		$_SESSION['keyword'] = '';
 		$_SESSION['kategori'] = '';
+		$_SESSION['bulan'] = '';
+		$_SESSION['tahun'] = '';
 		$_SESSION['jenis_informasi'] = '';
 		redirect('admin/datin/index');
 	}
 
 	public function form(){
-		$Datin = new stdClass();
+		$datin = new stdClass();
  
 		$this->form_validation->set_rules($this->validation_rules);
 
 		foreach ($this->validation_rules as $rule)
 		{
-			$Datin->{$rule['field']} = set_value($rule['field']);
+			$datin->{$rule['field']} = set_value($rule['field']);
 		}
-		$this->load->view('admin/form_o',array('Datin'=>$Datin));
+		$this->load->view('admin/form_o',array('datin'=>$datin));
 		}
 	
 
 		public function listdata(){
 			header('Content-Type: application/json');
-			$this->db->order_by('Datin_name','ASC');
-			$res = $this->db->get('Datins')->result();
+			$this->db->order_by('datin_name','ASC');
+			$res = $this->db->get('datins')->result();
 			foreach($res as $dat ){
-				$arr['result'][]=array('label'=>$dat->Datin_name,'value'=>$dat->id);
+				$arr['result'][]=array('label'=>$dat->datin_name,'value'=>$dat->id);
 			}
 			echo json_encode($arr);
 		}
 
 	/**
-	 * Create a new Datin
+	 * Create a new datin
 	 *
 	 * 
 	 * @return void
 	 */
 	public function add()
 	{
-		$Datin = new stdClass();
+		$datin = new stdClass();
 
 		if ($_POST)
 		{
 			$this->form_validation->set_rules($this->validation_rules);
 
-			$name = $this->input->post('Datin_name');
+			$name = $this->input->post('datin_name');
 
 			if ($this->form_validation->run())
 			{
-				$datainsert = array('Datin_name' => $name,
+				$datainsert = array('datin_name' => $name,
 									'user_id'=>$this->current_user->id,
 									'jenis_informasi' =>  $this->input->post('jenis_informasi'),
 									'urusan' =>  $this->input->post('urusan'),
-									'tgl_dokumen' =>  $this->input->post('tgl_dokumen'),
+									'bulan' =>  $this->input->post('bulan'),
+									'tahun' =>  $this->input->post('tahun'),
 									'tgl_input' => date('Y-m-d H:i:s'),
 									'status' =>  $this->input->post('status'),
 									'ringkasan' =>  $this->input->post('ringkasan'),
 								);
-				if ($id = $this->Datin_m->insert($datainsert))
+				if ($id = $this->datin_m->insert($datainsert))
 				{
-					// Fire an event. A new Datin has been added.
-					Events::trigger('Datin_created', $id);
+					// Fire an event. A new datin has been added.
+					Events::trigger('datin_created', $id);
 
-					$this->session->set_flashdata('success', sprintf(lang('Datin:add_success'), $name));
+					$this->session->set_flashdata('success', sprintf(lang('datin:add_success'), $name));
 				}
 				else
 				{
-					$this->session->set_flashdata('error', sprintf(lang('Datin:add_error'), $name));
+					$this->session->set_flashdata('error', sprintf(lang('datin:add_error'), $name));
 				}
 
 				redirect('admin/datin/edit/'.$id);
 			}
 		}
 
-		$Datin = new stdClass();
+		$datin = new stdClass();
 
 		// Loop through each validation rule
 		foreach ($this->validation_rules as $rule)
 		{
-			$Datin->{$rule['field']} = set_value($rule['field']);
+			$datin->{$rule['field']} = set_value($rule['field']);
 		}
 
 		$jenis_info_db=$this->db->get('master_jenis_informasis')->result();
@@ -245,9 +257,9 @@ class Admin extends Admin_Controller
 		}
 
 		$this->template
-			->title($this->module_details['name'], lang('Datin:add_title'))
+			->title($this->module_details['name'], lang('datin:add_title'))
 			->append_js('module::datin.js')
-			->set('Datin', $Datin)
+			->set('datin', $datin)
 			->set('jenis_info',$jenis_info)
 			->set('urusan',$urusan)
 			->build('admin/form');
@@ -257,7 +269,7 @@ class Admin extends Admin_Controller
 	{  header('Content-Type: application/json');
 		$arr=array();
 		$this->db->where('name',$this->input->post('name'));
-		$cek = $this->db->get('Datins')->row();
+		$cek = $this->db->get('datins')->row();
 		$arr=array();
 		if(!empty($cek->name)){
 			$arr['result']='error';
@@ -269,15 +281,15 @@ class Admin extends Admin_Controller
 		{
 			$this->form_validation->set_rules($this->validation_rules);
 
-			$name = $this->input->post('Datin_name');
+			$name = $this->input->post('datin_name');
 
 			if ($this->form_validation->run())
 			{
-				if ($id = $this->Datin_m->insert(array('Datin_name' => $name,
+				if ($id = $this->datin_m->insert(array('datin_name' => $name,
 				'user_id'=>$this->current_user->id, 
 				)))
 				{
-					// Fire an event. A new Datin_supplier has been added. 
+					// Fire an event. A new datin_supplier has been added. 
 					$arr['result']='ok';
 					$arr['pesan'] = 'Data "'.$name.'" Berhasil Disimpan!';
 					echo json_encode($arr);
@@ -303,22 +315,23 @@ class Admin extends Admin_Controller
 		{
 			$this->form_validation->set_rules($this->validation_rules);
 
-			$name = $this->input->post('Datin_name');
+			$name = $this->input->post('datin_name');
 
 			if ($this->form_validation->run())
 			{
-				$datainsert = array('Datin_name' => $name,
+				$datainsert = array('datin_name' => $name,
 									'user_id'=>$this->current_user->id,
 									'jenis_informasi' =>  $this->input->post('jenis_informasi'),
-									'urusan' =>  $this->input->post('urusan'),
-									'tgl_dokumen' =>  $this->input->post('tgl_dokumen'), 
+									'urusan' =>  $this->input->post('urusan'), 
+									'bulan' =>  $this->input->post('bulan'),
+									'tahun' =>  $this->input->post('tahun'),
 									'status' =>  $this->input->post('status'),
 									'ringkasan' =>  $this->input->post('ringkasan'),
 								);
-				if ($success = $this->Datin_m->update($id, $datainsert))
+				if ($success = $this->datin_m->update($id, $datainsert))
 				 
 				{
-					// Fire an event. A new Datin_supplier has been added. 
+					// Fire an event. A new datin_supplier has been added. 
 					$arr['result']='ok';
 					$arr['pesan'] = 'Data "'.$name.'" Berhasil Disimpan!';
 				}
@@ -336,11 +349,11 @@ class Admin extends Admin_Controller
 
 
 	/**
-	 * Edit a Datin
+	 * Edit a datin
 	 *
 	 * 
 	 *
-	 * @param int $id The ID of the Datin to edit
+	 * @param int $id The ID of the datin to edit
 	 *
 	 * @return void
 	 */
@@ -348,7 +361,9 @@ class Admin extends Admin_Controller
 	{
 		header('Content-Type: application/json');
 
-		$dokumen = do_upload('file');
+		$dokumen = do_upload('file'); 
+
+	 
 		if($dokumen['status']=='ok'){
 			$arrdok = array(
 				'dokumen' => $dokumen['data'],
@@ -356,9 +371,12 @@ class Admin extends Admin_Controller
 				'master_id' => $id
 			);
 			$this->db->insert('datins_applied',$arrdok);
+			$arr['status']='ok';
+		}else{
+			$arr['status']='gagal';
 		}
 		 
-		$arr['status']='ok';
+		
 		echo json_encode($arr);
 
 
@@ -395,34 +413,35 @@ class Admin extends Admin_Controller
 
 	public function edit($id = 0)
 	{
-		$Datin = $this->Datin_m->get($id);
+		$datin = $this->datin_m->get($id);
 
 		// Make sure we found something
-		$Datin or redirect('admin/Datin');
+		$datin or redirect('admin/datin');
 
 		if ($_POST)
 		{
 			$this->form_validation->set_rules($this->validation_rules);
 
-			$name = $this->input->post('Datin_name');
+			$name = $this->input->post('datin_name');
 
 			if ($this->form_validation->run())
-					{$datainsert = array('Datin_name' => $name,
+					{$datainsert = array('datin_name' => $name,
 						'user_id'=>$this->current_user->id,
 						'jenis_informasi' =>  $this->input->post('jenis_informasi'),
-						'urusan' =>  $this->input->post('urusan'),
-						'tgl_dokumen' =>  $this->input->post('tgl_dokumen'), 
+						'urusan' =>  $this->input->post('urusan'), 
+						'bulan' =>  $this->input->post('bulan'),
+						'tahun' =>  $this->input->post('tahun'),
 						'status' =>  $this->input->post('status'),
 						'ringkasan' =>  $this->input->post('ringkasan'),
 					);
-				if ($success = $this->Datin_m->update($id, $datainsert)){
-					// Fire an event. A Datin has been updated.
-					Events::trigger('Datin_updated', $id);
-					$this->session->set_flashdata('success', sprintf(lang('Datin:edit_success'), $name));
+				if ($success = $this->datin_m->update($id, $datainsert)){
+					// Fire an event. A datin has been updated.
+					Events::trigger('datin_updated', $id);
+					$this->session->set_flashdata('success', sprintf(lang('datin:edit_success'), $name));
 				}
 				else
 				{
-					$this->session->set_flashdata('error', sprintf(lang('Datin:edit_error'), $name));
+					$this->session->set_flashdata('error', sprintf(lang('datin:edit_error'), $name));
 				}
 
 				redirect('admin/datin');
@@ -442,44 +461,44 @@ class Admin extends Admin_Controller
 			$urusan[$idji]=$name;
 		}
 		$this->template
-			->title($this->module_details['name'], sprintf(lang('Datin:edit_title'), $Datin->Datin_name))
+			->title($this->module_details['name'], sprintf(lang('datin:edit_title'), $datin->datin_name))
 			->append_js('module::datin.js') 
 			->set('jenis_info',$jenis_info)
 			->set('urusan',$urusan)
-			->set('Datin', $Datin)
+			->set('datin', $datin)
 			->build('admin/form');
 	}
 
 	/**
-	 * Delete Datin role(s)
+	 * Delete datin role(s)
 	 *
 	 * 
 	 *
-	 * @param int $id The ID of the Datin to delete
+	 * @param int $id The ID of the datin to delete
 	 *
 	 * @return void
 	 */
 	public function delete($id = 0)
 	{
-		if ($success = $this->Datin_m->delete($id))
+		if ($success = $this->datin_m->delete($id))
 		{
-			// Fire an event. A Datin has been deleted.
-			Events::trigger('Datin_deleted', $id);
-			$this->session->set_flashdata('success', lang('Datin:delete_success'));
+			// Fire an event. A datin has been deleted.
+			Events::trigger('datin_deleted', $id);
+			$this->session->set_flashdata('success', lang('datin:delete_success'));
 		}
 		else
 		{
-			$this->session->set_flashdata('error', lang('Datin:delete_error'));
+			$this->session->set_flashdata('error', lang('datin:delete_error'));
 		}
 
-		redirect('admin/Datin');
+		redirect('admin/datin');
 	}
 
 	public function autocomplete()
 	{
 		echo json_encode(
-			$this->Datin_m->select('Datin_name value')
-				->like('Datin_name', $this->input->get('term'))
+			$this->datin_m->select('datin_name value')
+				->like('datin_name', $this->input->get('term'))
 				->get_all()
 		);
 	}
@@ -488,7 +507,7 @@ class Admin extends Admin_Controller
 	{
 		$this->form_validation->set_message('_check_title', sprintf(lang('jenisbarang:already_exist_error'), lang('global:title')));
 
-		return $this->check_exists('Datin_name', $title, $this->uri->segment(4));
+		return $this->check_exists('datin_name', $title, $this->uri->segment(4));
 	}
 
 	public function check_exists($field, $value = '', $id = 0)
@@ -505,9 +524,9 @@ class Admin extends Admin_Controller
 		$params['id !='] = (int)$id;
 
 		if($id > 0){
-			$this->db->where('Datin_name',$value);
+			$this->db->where('datin_name',$value);
 			$this->db->where('id <>',$id);
-			$res = $this->db->get('Datins')->row();
+			$res = $this->db->get('datins')->row();
 			if($res==''){
 				$this->session->set_flashdata('success', 'Data Berhasil disimpan!');
 				return true;
@@ -516,8 +535,8 @@ class Admin extends Admin_Controller
 				return false;
 			}
 		}else{
-			$this->db->where('Datin_name',$value); 
-			$res = $this->db->get('Datins')->row();
+			$this->db->where('datin_name',$value); 
+			$res = $this->db->get('datins')->row();
 			if($res==''){
 				$this->session->set_flashdata('success', 'Data Berhasil disimpan!');
 				return true;

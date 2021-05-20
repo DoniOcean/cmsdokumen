@@ -1,12 +1,25 @@
  
- 
-<div id="panel-4" class="panel">
+
+
+ <?php
+     for($i=1;$i<=31;$i++){
+        $array_bulan[$i]=$i;
+     }
+     for($i=2010;$i<=date('Y');$i++){
+        $array_tahun[$i]=$i;
+     }
+     
+     ?>
+	 <div id="panel-4" class="panel">
 	<div class="panel-hdr">
                                         <h2>
                                             <?php echo $module_details['name']?> <span class="fw-300"><i>Tables</i></span>
                                         </h2>
                                         <div class="panel-toolbar">
-                                       </div>
+										<?php if(($this->current_user->group_id =='1') OR ($this->current_user->group_id =='3')){?>
+										<a class="btn btn-primary waves-effect waves-themed" icon="fa-plus" href="<?php echo base_url()?>admin/datin/add"><span class="fal fa-plus mr-1"></span> Tambah Data Dan Informasi</a>
+                                       <?php }?>
+									   </div>
                                     </div>
 									<div class="panel-container show">
 									<div class="panel-content"> 
@@ -16,11 +29,18 @@
 									<input value="<?php echo @$_SESSION['keyword']?>" name="search" type="search" class="form-control border-top-left-radius-0 border-bottom-left-radius-0 ml-0 width-lg shadow-inset-1" placeholder="Search" aria-controls="dt-basic-example">
 									</label>
 									<label> 
-									<?php echo form_dropdown('kategorisrch',array('0'=>'--PILIH SEMUA--')+$urusan,@$_SESSION['kategori'],' class="form-control "')?>
+									<?php echo form_dropdown('bulan',array('0'=>'--Bulan--')+$array_bulan,@$_SESSION['bulan'],' class="form-control "')?>
+									</label>
+									<label> 
+									<?php echo form_dropdown('tahun',array('0'=>'--Tahun--')+$array_tahun,@$_SESSION['tahun'],' class="form-control "')?>
 									</label>
 									<label>
-									<?php echo form_dropdown('jenis_informasi', array('0'=>'--Pilih Jenis Informasi--')+$jenis,  @$_SESSION['jenis_informasi'],' class="form-control"') ?>
+									<?php echo form_dropdown('jenis_informasi', array('0'=>'--Jenis Informasi--')+$jenis,  @$_SESSION['jenis_informasi'],' class="form-control"') ?>
 </label>
+									<label> 
+									<?php echo form_dropdown('kategorisrch',array('0'=>'--Jenis Urusan--')+$urusan,@$_SESSION['kategori'],' class="form-control "')?>
+									</label>
+								
 									<button type="submit" class="btn btn-primary btn-icon waves-effect waves-themed">
                                                         <i class="fal fa-search"></i> 
                                                     </button>
@@ -28,7 +48,7 @@
                                                         <i class="fal fa-sync"></i> 
                                                     </a>
 									</form>
-<?php if ($Datins): ?>
+<?php if ($datins): ?>
 	<div class="table-responsive-sm table-responsive-md">
     <table class="table table-bordered table-striped m-0" cellspacing="0">
 		<thead>
@@ -36,7 +56,8 @@
 				<th>Nama Dokumen</th>
 				<th>Jenis Informasi</th>
 				<th>Urusan</th>
-				<th>Tgl.Dokumen</th> 
+				<th>Bulan</th> 
+				<th>Tahun</th> 
 			</tr>
 		</thead>
 		<tfoot>
@@ -51,12 +72,13 @@
 			</tr>
 		</tfoot>
 		<tbody>
-		<?php foreach ($Datins as $Datin):?>
+		<?php foreach ($datins as $datin):?>
 			<tr>
-				<td><a href="javascript:void(0);" onClick="detail('<?php echo $Datin->id?>')"><?php echo $Datin->Datin_name ?></a></td>
-				<td><?php echo $Datin->ji ?></td>
-				<td><?php echo $Datin->mu ?></td>
-				<td><?php echo date_format(date_create($Datin->tgl_dokumen),'d-m-Y') ?></td>
+				<td><a href="javascript:void(0);" onClick="detail('<?php echo $datin->id?>')"><?php echo $datin->datin_name ?></a></td>
+				<td><?php echo $datin->ji ?></td>
+				<td><?php echo $datin->mu ?></td>
+				<td class="text-right"><?php echo $datin->bulan ?></td>
+				<td class="text-right"><?php echo $datin->tahun ?></td>
 			 
  
 

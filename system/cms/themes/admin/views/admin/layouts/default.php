@@ -46,7 +46,7 @@
  
 </head>
 
-<body class="mod-bg-1 mod-nav-link nav-function-fixed header-function-fixed   ">
+<body class="mod-bg-1 mod-skin-dark mod-nav-link nav-function-fixed header-function-fixed   ">
 <script>
     /**
      *	This script should be placed right after the body tag for fast execution

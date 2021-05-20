@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+
+
+    <head>
+        {{ theme:partial name="metadata" }}
+    </head>
+
+    <body class="stretched no-transition">
+
+        <div id="wrapper" class="clearfix">
+        
+            {{ theme:partial name="header_default" }}
+            
+        
+<section id="page-title">
+    <div class="container clearfix">
+    <h1>{{ template:title }}</h1>
+    <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="#">Home</a></li>
+    <li class="breadcrumb-item"><a href="#">Shortcodes</a></li>
+    <li class="breadcrumb-item active" aria-current="page">List Groups &amp; Cards</li>
+    </ol>
+    </div>
+    </section>
+    <section id="content" style="margin-bottom: 0px;">
+        <div class="content-wrap">
+        <div class="container clearfix">
+            <?php
+                 
+                if($this->session->flashdata('success')){ ?>
+                    <div class="alert alert-success">
+                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+                        <strong>Success!</strong> <?php echo $this->session->flashdata('success'); ?>
+                    </div>
+            
+                <?php } else if($this->session->flashdata('error')){  ?>
+            
+                    <div class="alert alert-danger">
+                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+                        <strong>Error!</strong> <?php echo $this->session->flashdata('error'); ?>
+                    </div>
+            
+                <?php } else if($this->session->flashdata('warning')){  ?>
+            
+                    <div class="alert alert-warning">
+                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+                        <strong>Warning!</strong> <?php echo $this->session->flashdata('warning'); ?>
+                    </div>
+            
+                <?php } else if($this->session->flashdata('info')){  ?>
+            
+                    <div class="alert alert-info">
+                        <a href="#" class="close" data-dismiss="alert">&times;</a>
+                        <strong>Info!</strong> <?php echo $this->session->flashdata('info'); ?>
+                    </div>
+                <?php } ?>
+                {{ template:body }} 
+            </div>
+            </div>
+            </section>
+
+        
+    {{ theme:partial name="js" }}
+        </div>
+        
+        <div id="gotoTop" class="icon-angle-up"></div>
+        {{ theme:partial name="js" }}
+    
+    </body>
+    </html>

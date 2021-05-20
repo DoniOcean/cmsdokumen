@@ -241,9 +241,8 @@ class Admin extends Admin_Controller
 			// Go through all the known fields and get the post values
 			$post = new stdClass;
 			foreach ($this->validation_rules as $key => $field)
-			{ 
-				$name=$field['field'];
-				$post->$name = set_value($field['field']);
+			{
+				$post->$field['field'] = set_value($field['field']);
 			}
 			$post->created_on = $created_on;
 
@@ -594,7 +593,6 @@ class Admin extends Admin_Controller
 	 */
 	private function _preview_hash()
 	{
-		
-		return @md5(microtime() + mt_rand(0, 1000));
+		return md5(microtime() + mt_rand(0, 1000));
 	}
 }

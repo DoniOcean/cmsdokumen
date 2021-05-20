@@ -3,14 +3,14 @@
  * Keyword model
  *
  * @author		PyroCMS Dev Team
- * @package		PyroCMS\Core\Modules\Datin\Models
+ * @package		PyroCMS\Core\Modules\datin\Models
  */
-class Datin_m extends MY_Model {
+class datin_m extends MY_Model {
 	
 	/**
 	 * Get applied
 	 *
-	 * Gets all the Datin applied with a certain hash
+	 * Gets all the datin applied with a certain hash
 	 *
 	 * @param	string	$hash	The unique hash stored for a entry
 	 * @return	array
@@ -20,16 +20,16 @@ class Datin_m extends MY_Model {
 		return $this->db
 			->select('name')
 			->where('hash', $hash)
-			->join('Datin', 'keyword_id = Datin.id')
+			->join('datin', 'keyword_id = datin.id')
 			->order_by('name')
-			->get('Datin_applied')
+			->get('datin_applied')
 			->result();
 	}
 	
 	/**
 	 * Delete applied
 	 *
-	 * Deletes all the Datin applied byhash
+	 * Deletes all the datin applied byhash
 	 *
 	 * @param	string	$hash	The unique hash stored for a entry
 	 * @return	array
@@ -38,27 +38,35 @@ class Datin_m extends MY_Model {
 	{
 		return $this->db
 			->where('hash', $hash)
-			->delete('Datin_applied');
+			->delete('datin_applied');
 	}
 
 	function count_by()
 	{
 		  if(!empty($_SESSION['keyword'])){
-			$this->db->like('Datin_name',$_SESSION['keyword']);
+			$this->db->like('datin_name',$_SESSION['keyword']);
 		  }
 
-		return $this->db->count_all_results('Datins');
+		return $this->db->count_all_results('datins');
 	}
 
 	function get_many_by($params = array())
 	{
 		$this->db->select(' datins.*,master_jenis_informasis.master_jenis_informasi_name as ji,master_urusans.master_urusan_name as mu');
 		if(!empty($_SESSION['keyword'])){
-			$this->db->like("CONCAT(Datin_name,' ',ringkasan)",$_SESSION['keyword']);
+			$this->db->like("CONCAT(datin_name,' ',ringkasan)",$_SESSION['keyword']);
 		  }
 
 		  if(!empty($_SESSION['kategori'])){
 			$this->db->where("urusan",$_SESSION['kategori']);
+		  }
+
+		  if(!empty($_SESSION['bulan'])){
+			$this->db->where("bulan",$_SESSION['bulan']);
+		  }
+
+		  if(!empty($_SESSION['tahun'])){
+			$this->db->where("tahun",$_SESSION['tahun']);
 		  }
 
 		  if(!empty($_SESSION['jenis_informasi'])){
@@ -70,7 +78,7 @@ class Datin_m extends MY_Model {
 		
 		$this->db->join('master_jenis_informasis','master_jenis_informasis.id=datins.jenis_informasi');
 		$this->db->join('master_urusans','master_urusans.id=datins.urusan');
-		$this->db->order_by('id','DESC');
+		$this->db->order_by("CONCAT(tahun,'-',bulan,'-01')",'ASC',FALSE);
 		return $this->db->get('datins')->result();
 	}
 }
